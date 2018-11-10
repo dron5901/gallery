@@ -56,6 +56,22 @@ class Gallery extends React.PureComponent {
     this.prevImage = this.prevImage.bind(this);
   }
 
+  componentDidMount() {
+    this.runTimer();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.changeImageTimer);
+  }
+
+  runTimer() {
+    if (this.changeImageTimer) clearInterval(this.changeImageTimer);
+
+    this.changeImageTimer = setInterval(() => {
+      this.nextImage();
+    }, this.props.changeImageInterval || 3000);
+  }
+
   nextImage() {
     this.setState(prevState => {
       if (prevState.currentImageIndex === this.props.images.length - 1) {
@@ -68,6 +84,8 @@ class Gallery extends React.PureComponent {
         };
       }
     });
+
+    this.runTimer();
   }
 
   prevImage() {
@@ -82,6 +100,8 @@ class Gallery extends React.PureComponent {
         };
       }
     });
+
+    this.runTimer();
   }
 
   render() {
@@ -91,7 +111,6 @@ class Gallery extends React.PureComponent {
       <div className="gallery-container">
         <PrevBtn onClick={this.prevImage}>&#60;</PrevBtn>
         {images.map((image, index) => {
-          debugger;
           return (
             <Image
               key={index}
